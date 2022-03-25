@@ -15,7 +15,7 @@ public class CustomerEntity {
     private String email;
     private Integer store_id;
     private Integer address_id;
-    private Boolean active_bool;
+    private Boolean activebool;
     private Date create_date;
     private Date last_update;
     private Integer active;
