@@ -26,7 +26,12 @@ public class CustomerEntity {
     public void setId(Integer id) {
         this.customer_id = id;
     }
-
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setAddressId(Integer addressId) {
+        this.address_id = addressId;
+    }
     public String getFirstName() {
         return first_name;
     }
