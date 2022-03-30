@@ -2,7 +2,8 @@ package kiennc.dattingapp.model;
 
 import java.util.Date;
 
-public class CustomerModel { public Integer customer_id;
+public class CustomerModel { 
+   public Integer customer_id;
    public String first_name;
    public String last_name;
    public String email;
