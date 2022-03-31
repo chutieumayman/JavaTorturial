@@ -19,6 +19,13 @@ public class AddressEntity {
     private String phone;
     private Date last_update;
 
+    public Integer getAddress_id(){
+        return address_id;
+    }
+    public void setAddress_id(Integer address_id) {
+        this.address_id = address_id;
+    }
+
     public String getAddress() {
         return address;
     }

@@ -26,7 +26,7 @@ public class AddressController {
     @GetMapping("/address/id")
     public ResponseEntity<ResponseObject> findById(@PathVariable Integer id)
     {
-       Optional<AddressEntity> foundAddress= addressRepository.findById(id);
+       Optional<AddressEntity> foundAddress= addressRepository.findByAddress_id(id);
        return foundAddress.isPresent()?
                 ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("Ok","Success",foundAddress)):
@@ -41,7 +41,6 @@ public class AddressController {
     public ResponseEntity<ResponseObject> insert(@RequestBody AddressEntity newaddress)
     {
         List<AddressEntity> foundAddress= addressRepository.findByAddress(newaddress.getAddress().trim());
-        String status;
         if(foundAddress.size()>0){
             return  ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
                 new ResponseObject("false","Đã tồn tại adđres",""));
