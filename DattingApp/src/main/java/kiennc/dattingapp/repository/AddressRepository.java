@@ -9,5 +9,4 @@ import kiennc.dattingapp.entity.AddressEntity;
 
 public interface  AddressRepository  extends JpaRepository<AddressEntity,Integer> {
     List<AddressEntity> findByAddress(String address);
-    Optional<AddressEntity> findByAddress_id(Integer address_id);
 }

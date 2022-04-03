@@ -5,25 +5,27 @@ import java.util.Date;
 
 @Entity
 @Table(name = "address")
+
 public class AddressEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer address_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="address_id")
+    private Integer id;
     private String address;
     private String address2;
 
     private String district;
-    private Integer city_id;
-    private String postal_code;
+    private Integer cityId;
+    private String postalCode;
     private String phone;
-    private Date last_update;
+    private Date lastUpdate;
 
-    public Integer getAddress_id(){
-        return address_id;
+    public Integer getId(){
+        return id;
     }
-    public void setAddress_id(Integer address_id) {
-        this.address_id = address_id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -38,28 +40,28 @@ public class AddressEntity {
         this.phone = phone;
     }
 
-    public Date getLast_update() {
-        return last_update;
+    public Date getLastUpdate() {
+        return lastUpdate;
     }
 
-    public void setLast_update(Date last_update) {
-        this.last_update = last_update;
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
-    public String getPostal_code() {
-        return postal_code;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostal_code(String postal_code) {
-        this.postal_code = postal_code;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
-    public Integer getCity_id() {
-        return city_id;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public void setCity_id(Integer city_id) {
-        this.city_id = city_id;
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 
     public String getDistrict() {
@@ -82,15 +84,15 @@ public class AddressEntity {
         this.address = address;
     }
 
-    public void AddaddressEntity( String address, String address2, String district, Integer city_id,
-            String postal_code, String phone, Date last_update) {
+    public void AddaddressEntity( String address, String address2, String district, Integer cityId,
+            String postalCode, String phone, Date lastUpdate) {
         this.address = address;
         this.setAddress2(address2);
         this.setDistrict(district);
-        this.setCity_id(city_id);
-        this.setPostal_code(postal_code);
+        this.setCityId(cityId);
+        this.setPostalCode(postalCode);
         this.setPhone(phone);
-        this.setLast_update(last_update);
+        this.setLastUpdate(lastUpdate);
     }
 
 }

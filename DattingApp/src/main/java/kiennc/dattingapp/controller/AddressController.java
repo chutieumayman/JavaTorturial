@@ -5,8 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import kiennc.dattingapp.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import kiennc.dattingapp.entity.AddressEntity;
@@ -14,19 +18,23 @@ import kiennc.dattingapp.model.ResponseObject;
 import kiennc.dattingapp.repository.AddressRepository;
 
 @RestController
+@RequestMapping("address")
 public class AddressController {
     @Autowired
-    private AddressRepository addressRepository;
+    AddressService addressService;
+    private AddressEntity newaddress;
+    private Integer id;
 
-    @GetMapping("/address/list")
-    public  Iterable<AddressEntity> getCustomers(){
-        return addressRepository.findAll();
+    @GetMapping("list")
+    public ResponseEntity<ResponseObject> getCustomers(){
+        return  ResponseEntity.status(HttpStatus.OK).body(
+            new ResponseObject("Ok","Success",addressService.findAll()));
     }
     //Get id with Get
-    @GetMapping("/address/id")
-    public ResponseEntity<ResponseObject> findById(@PathVariable Integer id)
+    @GetMapping("{id}")
+    public ResponseEntity<ResponseObject> findByAddressId(@PathVariable Integer id)
     {
-       Optional<AddressEntity> foundAddress= addressRepository.findByAddress_id(id);
+       Optional<AddressEntity> foundAddress= addressService.findById(id);
        return foundAddress.isPresent()?
                 ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("Ok","Success",foundAddress)):
@@ -36,59 +44,77 @@ public class AddressController {
         
     }
 
-    //insert with Post
-    @GetMapping("/address/insert")
+    //insert with post
+   @PostMapping("insert")
     public ResponseEntity<ResponseObject> insert(@RequestBody AddressEntity newaddress)
     {
-        List<AddressEntity> foundAddress= addressRepository.findByAddress(newaddress.getAddress().trim());
-        if(foundAddress.size()>0){
-            return  ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                new ResponseObject("false","Đã tồn tại adđres",""));
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("Ok","Insert thành công",addressRepository.save(newaddress))
+        try {
+            Date date = new Date();
+            newaddress.setLastUpdate(date);
+            List<AddressEntity> foundAddress = addressService.findByAddress(newaddress.getAddress().trim());
+            if (foundAddress.size() > 0) {
+                return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+                        new ResponseObject("false", "Đã tồn tại adđres", ""));
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("Ok", "Insert thành công", addressService.save(newaddress))
             );
-    }
-
-    // update
-    @PutMapping("/address/id")
-    public ResponseEntity<ResponseObject> update(@RequestBody AddressEntity newaddress, @PathVariable Integer id)
-    {
-        Date date= new Date();
-       AddressEntity foundAddress= addressRepository.findById(id)
-                        .map(address->{
-                            address.setAddress(newaddress.getAddress());
-                            address.setAddress2(newaddress.getAddress2());
-                            address.setDistrict(newaddress.getDistrict());
-                            address.setCity_id(newaddress.getCity_id());
-                            address.setPostal_code(newaddress.getPostal_code());
-                            address.setPhone(newaddress.getPhone());
-                            address.setLast_update(date);
-                            return addressRepository.save(address);
-                        }).orElseGet(()->{
-                            return addressRepository.save(newaddress);
-                        });
-
-                        return  ResponseEntity.status(HttpStatus.OK).body(
-                        new ResponseObject("Ok","Update thành công",foundAddress)
-                    );
-    }
-
-     // delete
-     @DeleteMapping("/address/id")
-     public ResponseEntity<ResponseObject> update(@PathVariable Integer id)
-     {
-        boolean exists = addressRepository.existsById(id);
-        if(exists){
-            addressRepository.deleteById(id);
-            return  ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("Ok","Delete thành công",""));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("Error", e.getMessage(), newaddress)
+            );
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-            new ResponseObject("false","Không tồn tại id"+id,"")
+    }
+
+    // update with put
+    @PutMapping("update/{id}")
+    public ResponseEntity<ResponseObject> update(@RequestBody AddressEntity newaddress, @PathVariable Integer id)
+    {        try {
+        Date date= new Date();
+       AddressEntity foundAddress= addressService.findById(id)
+                .map(add-> {
+                    add.setAddress(newaddress.getAddress());
+                    add.setAddress2(newaddress.getAddress2());
+                    add.setDistrict(newaddress.getDistrict());
+                    add.setCityId(newaddress.getCityId());
+                    add.setPostalCode(newaddress.getPostalCode());
+                    add.setPhone(newaddress.getPhone());
+                    add.setLastUpdate(date);
+                    return addressService.save(add);
+                }).orElseGet(()->{
+                    return addressService.save(newaddress);
+                });
+
+        return  ResponseEntity.status(HttpStatus.OK).body(
+                 new ResponseObject("Ok","Update thành công",foundAddress));
+    }catch (Exception e){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("Error", e.getMessage(), newaddress)
         );
+    }
+    }
+
+     // delete with id
+     @DeleteMapping("delete/{id}")
+     public ResponseEntity<ResponseObject> delete(@PathVariable Integer id)
+     {
+         try {
+             boolean ckFoundAddress = addressService.existsById(id);
+             if (ckFoundAddress) {
+                 addressService.deleteById(id);
+                 return ResponseEntity.status(HttpStatus.OK).body(
+                         new ResponseObject("Ok", "Delete thành công", ""));
+             }
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                     new ResponseObject("false", "Không tồn tại id" + id, "")
+             );
+         }
+           catch (Exception e){
+         return ResponseEntity.status(HttpStatus.OK).body(
+                 new ResponseObject("Error", e.getMessage(), newaddress)
+         );
      }
-    
+    }
 }
     
 
